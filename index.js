@@ -22,7 +22,7 @@ const port = process.env.PORT || 8080;
 
 
 /** HTTP GET Request */
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.status(201).json("API is Working!");
 });
 
