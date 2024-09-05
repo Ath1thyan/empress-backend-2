@@ -7,19 +7,28 @@ import dbConnection from './database/dbConnection.js';
 /** Import routes */
 import authRoute from './routes/authRoute.js';
 
-
 /** Load environment variables */
 dotenv.config();
 const app = express();
 
 /** middlewares */
 app.use(express.json());
-app.use(cors());
+
+app.use(cors({
+    origin: 'http://localhost:5173', // Correct frontend origin without the trailing slash
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+}));
+
 app.use(morgan('tiny'));
-app.disable('x-powered-by');    // Removes all X-Powered-By headers.
+app.disable('x-powered-by'); // Removes all X-Powered-By headers.
+
+/** CORS Preflight */
+app.options('*', cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
 
 const port = process.env.PORT || 8080;
-
 
 /** HTTP GET Request */
 app.get('/api', (req, res) => {
@@ -28,7 +37,6 @@ app.get('/api', (req, res) => {
 
 /** API Routes */
 app.use('/api/test/auth', authRoute);
-
 
 /** Start server only if having valid DB connection */
 dbConnection()

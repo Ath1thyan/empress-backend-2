@@ -3,7 +3,7 @@ const router = express.Router();
 
 
 /** Import controllers */
-import { register, login, getUser, updateUser, generateOTP, verifyOTP, createResetSession, resetPassword, logout, deleteUser, verifyUser } from '../controllers/authController.js';
+import { register, login, getUser, updateUser, generateOTP, verifyOTP, createResetSession, resetPassword, logout, deleteUser, verifyUser, googlelogin } from '../controllers/authController.js';
 import Auth, { localVariables } from '../middleware/auth.js';
 import { registerMail } from "../controllers/mailer.js";
 
@@ -13,6 +13,7 @@ router.route('/register').post(register);    // register
 router.route('/registerMail').post(registerMail);   // send the email
 router.route('/authenticate').post();  // authenticate user
 router.route('/login').post(verifyUser, login);  // login
+router.route('/googlelogin').post(googlelogin);  // Google login
 // router.route('/forgotPassword').post(forgotPassword);  // forgot password
 // router.route('/resendVerification').post(resendVerificationEmail);  // resend verification email
 

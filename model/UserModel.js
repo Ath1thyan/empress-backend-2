@@ -22,7 +22,8 @@ export const UserSchema = new mongoose.Schema({
     },
     salutation: {
         type: String,
-        enum: ['Mr', 'Mrs', 'Ms', 'Dr', '']
+        enum: ['Mr', 'Ms', 'Dr', 'Prof', 'Mrs'],
+        default: 'Mr'
     },
     firstName: {
         type: String,
@@ -38,7 +39,7 @@ export const UserSchema = new mongoose.Schema({
     },
     mobile: {
         type: Number,
-        required: true,
+        required: false,
         unique: [true, "Mobile number already registered"],
         minlength: 6,
         maxlength: 15

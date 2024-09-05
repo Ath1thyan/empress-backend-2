@@ -272,6 +272,62 @@ export async function login(req, res) {
 }
 
 
+/** PUT: http://localhost:8080/api/auth/googlelogin */
+export async function googlelogin(req, res) {
+    try {
+        // Check if the user already exists
+        const user = await UserModel.findOne({ email: req.body.email });
+        if (user) {
+            // Generate token for existing user
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const { password: hashedPassword, ...restItems } = user._doc;
+            const expiryDuration = new Date(Date.now() + 3600000); // 1 hour
+            res.cookie('access_token', token, { httpOnly: true, expires: expiryDuration })
+                .status(200)
+                .send({
+                    success: true,
+                    message: 'Google login successful',
+                    user: restItems,
+                });
+        } else {
+            // Create new user with a random generated password
+            const generatedPassword = Math.random().toString(36).slice(-8);
+            const hashedPassword = await bcrypt.hash(generatedPassword, 10); // added await for hashing
+            const newUser = new UserModel({
+                username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-8),
+                email: req.body.email,
+                password: hashedPassword,
+                salutation: req.body.salutation || 'Mr', // Provide a default salutation if not present
+                firstName: req.body.name.split(" ")[0] || '',
+                lastName: req.body.name.split(" ")[1] || "",
+                mobile: req.body.mobile || '', // Optional mobile field, or provide a default
+                googleId: req.body.id, // Ensure googleId is sent from client
+            });
+            
+            await newUser.save();
+            // Generate token for new user
+            const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const { password: hashedPassword2, ...restItems } = newUser._doc;
+            const expiryDuration = new Date(Date.now() + 3600000); // 1 hour
+            res.cookie('access_token', token, { httpOnly: true, expires: expiryDuration })
+                .status(200)
+                .send({
+                    success: true,
+                    message: 'User created successfully',
+                    user: restItems,
+                });
+        }
+    } catch (error) {
+        console.error('Error during Google login:', error);
+        return res.status(500).send({
+            success: false,
+            message: 'Internal Server Error',
+        });
+    }
+}
+
+
+
 /** GET: http://localhost:8080/api/auth/user/:email */
 export async function getUser(req, res) {
     const { email } = req.params;
@@ -434,7 +490,7 @@ export async function generateOTP(req, res) {
             success: true,
             message: 'OTP generated and sent successfully',
             OTP, // Ensure this is removed in production
-            
+
         });
 
     } catch (error) {
