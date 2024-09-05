@@ -434,6 +434,7 @@ export async function generateOTP(req, res) {
             success: true,
             message: 'OTP generated and sent successfully',
             OTP, // Ensure this is removed in production
+            
         });
 
     } catch (error) {
