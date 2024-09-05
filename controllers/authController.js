@@ -412,9 +412,9 @@ export async function generateOTP(req, res) {
         res.app.locals.OTP = OTP;
 
         // Log the OTP generation process for debugging
-        console.log('OTP generated:', OTP);
-        console.log("Test email:", process.env.MAILGUN_USER);
-        console.log("Test email password:", process.env.MAILGUN_PASSWORD);
+        // console.log('OTP generated:', OTP);
+        // console.log("Test email:", process.env.MAILGUN_USER);
+        // console.log("Test email password:", process.env.MAILGUN_PASSWORD);
         // dxus xxgo hsvt bsrq
 
 
