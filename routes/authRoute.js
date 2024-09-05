@@ -18,7 +18,7 @@ router.route('/login').post(verifyUser, login);  // login
 
 /** GET Methods */
 router.route('/logout').get(logout);  // logout
-router.route('/user/:email').get(getUser);  // user with username
+router.route('/user/:email').get(Auth, getUser);  // user with username
 router.route('/generateOTP').get(verifyUser, localVariables, generateOTP);   // generate random OTP
 router.route('/verifyOTP').get(verifyOTP);   // verify generated OTP
 router.route('/createResetSession').get(createResetSession);  // reset all the variables
