@@ -395,8 +395,10 @@ export async function updateUser(req, res) {
 /** GET: http://localhost:8080/api/test/auth/generateOTP */
 export async function generateOTP(req, res) {
     try {
+        const { email } = req.query;
+
         // Log request details for debugging
-        console.log('Received request for OTP generation with email:', req.query.email);
+        console.log('Received request for OTP generation with email:', email);
 
         // Generate a 6-digit OTP with numeric characters only
         const OTP = otpGenerator.generate(6, {
@@ -411,12 +413,27 @@ export async function generateOTP(req, res) {
 
         // Log the OTP generation process for debugging
         console.log('OTP generated:', OTP);
+        console.log("Test email:", process.env.MAILGUN_USER);
+        console.log("Test email password:", process.env.MAILGUN_PASSWORD);
+        // dxus xxgo hsvt bsrq
+
+
+        // Send the OTP to the user's email
+        const mailResponse = await sendMail({
+            to: email,
+            subject: "Your OTP Code",
+            text: `Your OTP code is ${OTP}. It is valid for 5 minutes.`
+        });
+
+        if (!mailResponse.success) {
+            throw new Error("Failed to send OTP email");
+        }
 
         // Send a success response with the generated OTP
         return res.status(200).send({
             success: true,
-            message: 'OTP generated successfully',
-            OTP, // Ensure this is sent for debugging purposes; remove in production
+            message: 'OTP generated and sent successfully',
+            OTP, // Ensure this is removed in production
         });
 
     } catch (error) {
@@ -543,10 +560,10 @@ export async function resetPassword(req, res) {
 
 
 // resend verification email when user didn't receive the email
-/** GET: http://localhost:8080/api/resendVerificationEmail */
-export async function resendVerificationEmail(req,res){
-    res.json('resendVerificationEmail')
-}
+// /** GET: http://localhost:8080/api/resendVerificationEmail */
+// export async function resendVerificationEmail(req,res){
+//     res.json('resendVerificationEmail')
+// }
 
 
 // log out the user
@@ -634,60 +651,60 @@ export async function logout(req, res) {
 
 // forgot password, send email to user with reset link
 /** POST: http://localhost:8080/api/test/auth/forgotPassword */
-export async function forgotPassword(req, res) {
-    try {
-        const { email } = req.body;
+// export async function forgotPassword(req, res) {
+//     try {
+//         const { email } = req.body;
 
-        // Validate email
-        if (!email) {
-            return res.status(400).send({
-                success: false,
-                message: "Please provide an email address",
-            });
-        }
+//         // Validate email
+//         if (!email) {
+//             return res.status(400).send({
+//                 success: false,
+//                 message: "Please provide an email address",
+//             });
+//         }
 
-        // Check if the user exists with the provided email
-        const user = await UserModel.findOne({ email });
-        if (!user) {
-            return res.status(404).send({
-                success: false,
-                message: "User not found with the provided email",
-            });
-        }
+//         // Check if the user exists with the provided email
+//         const user = await UserModel.findOne({ email });
+//         if (!user) {
+//             return res.status(404).send({
+//                 success: false,
+//                 message: "User not found with the provided email",
+//             });
+//         }
 
-        // Generate OTP
-        const otp = await generateOTP(); // Ensure generateOTP does not send a response itself.
+//         // Generate OTP
+//         const otp = await generateOTP(); // Ensure generateOTP does not send a response itself.
 
-        // Send OTP to the user's email
-        const mailResponse = await sendMail({
-            to: email,
-            subject: "Password Reset Request",
-            text: `Your OTP for password reset is ${otp}`,
-        });
+//         // Send OTP to the user's email
+//         const mailResponse = await sendMail({
+//             to: email,
+//             subject: "Password Reset Request",
+//             text: `Your OTP for password reset is ${otp}`,
+//         });
 
-        // If sending the email failed, return an error
-        if (!mailResponse.success) {
-            return res.status(500).send({
-                success: false,
-                message: "Failed to send OTP. Please try again later.",
-            });
-        }
+//         // If sending the email failed, return an error
+//         if (!mailResponse.success) {
+//             return res.status(500).send({
+//                 success: false,
+//                 message: "Failed to send OTP. Please try again later.",
+//             });
+//         }
 
-        // Return a success response after both OTP generation and email sending succeed
-        return res.status(200).send({
-            success: true,
-            message: "OTP sent successfully to your email",
-            OTP: otp, // Optional: return OTP in response if required for testing.
-        });
+//         // Return a success response after both OTP generation and email sending succeed
+//         return res.status(200).send({
+//             success: true,
+//             message: "OTP sent successfully to your email",
+//             OTP: otp, // Optional: return OTP in response if required for testing.
+//         });
 
-    } catch (error) {
-        console.error('Error during forgotPassword:', error);
-        if (!res.headersSent) {
-            return res.status(500).send({
-                success: false,
-                message: "Internal Server Error",
-            });
-        }
-    }
-}
+//     } catch (error) {
+//         console.error('Error during forgotPassword:', error);
+//         if (!res.headersSent) {
+//             return res.status(500).send({
+//                 success: false,
+//                 message: "Internal Server Error",
+//             });
+//         }
+//     }
+// }
 

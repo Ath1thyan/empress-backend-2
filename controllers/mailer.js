@@ -14,7 +14,19 @@ let nodeConfig = {
     }
 };
 
-let transporter = nodemailer.createTransport(nodeConfig);
+let mailconfig = {
+    secure: true,
+    host: 'smtp.gmail.com',
+    port: 465,
+    auth: {
+        user: process.env.MAILGUN_USER,
+        pass: process.env.MAILGUN_PASSWORD
+    }
+}
+
+let transporter = nodemailer.createTransport(mailconfig);
+
+// let transporter = nodemailer.createTransport(nodeConfig);
 
 let MailGenerator = new Mailgen({
     theme: "default",
@@ -81,14 +93,21 @@ export async function sendMail({ to, subject, text }) {
 
         // Define the email options
         let message = {
-            from: process.env.TEST_EMAIL,
+            from: process.env.MAILGUN_USER,
             to,
             subject,
             html: emailBody
         };
 
+        // Log the email details
+        console.log("Attempting to send email to:", to);
+        console.log("Email subject:", subject);
+        console.log("Email content:", text);
+
         // Send the email
         let info = await transporter.sendMail(message);
+
+        console.log("Email sent successfully:", info);
 
         return {
             success: true,
@@ -105,3 +124,4 @@ export async function sendMail({ to, subject, text }) {
         };
     }
 }
+
