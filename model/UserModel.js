@@ -5,8 +5,6 @@ export const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: [true, "Username already exists"],
-        minlength: 5,
-        maxlength: 20
     },
     password: {
         type: String,
