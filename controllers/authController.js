@@ -276,8 +276,10 @@ export async function login(req, res) {
 export async function googlelogin(req, res) {
     try {
         // Check if the user already exists
+        console.log("Google login request body:", req.body);
         const user = await UserModel.findOne({ email: req.body.email });
         if (user) {
+            console.log("User found:", user);
             // Generate token for existing user
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
             const { password: hashedPassword, ...restItems } = user._doc;
@@ -290,6 +292,7 @@ export async function googlelogin(req, res) {
                     user: restItems,
                 });
         } else {
+            console.log("Creating new user...");
             // Create new user with a random generated password
             const generatedPassword = Math.random().toString(36).slice(-8);
             const hashedPassword = await bcrypt.hash(generatedPassword, 10); // added await for hashing
