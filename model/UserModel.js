@@ -40,9 +40,9 @@ export const UserSchema = new mongoose.Schema({
     mobile: {
         type: Number,
         required: false,
-        unique: [true, "Mobile number already registered"],
         minlength: 6,
-        maxlength: 15
+        maxlength: 15,
+        sparse: true
     },
     address: {
         type: String,

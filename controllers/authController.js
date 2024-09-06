@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import otpGenerator from 'otp-generator';
 import { sendMail } from './mailer.js';
 
-/** Load environment variables */  
+/** Load environment variables */
 dotenv.config();
 
 
@@ -303,10 +303,13 @@ export async function googlelogin(req, res) {
                 salutation: req.body.salutation || '',
                 firstName: req.body.name.split(" ")[0] || '',
                 lastName: req.body.name.split(" ")[1] || "",
-                mobile: req.body.mobile || '',
                 googleId: req.body.id, // Ensure googleId is sent from client
             });
-            
+
+            if (req.body.mobile) {
+                newUser.mobile = req.body.mobile;
+            }
+
             await newUser.save();
             // Generate token for new user
             const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
@@ -334,7 +337,7 @@ export async function googlelogin(req, res) {
 /** GET: http://localhost:8080/api/auth/user/:email */
 export async function getUser(req, res) {
     const { email } = req.params;
-    
+
     try {
         if (!email) {
             return res.status(400).send({
