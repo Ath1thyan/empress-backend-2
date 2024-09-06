@@ -14,15 +14,17 @@ const app = express();
 /** middlewares */
 app.use(express.json());
 
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace this with your frontend URL
+    credentials: true, // Allow credentials such as cookies
+}));
+
+// Preflight request
 app.options('*', cors({
-    origin: '*', // Allow all origins
+    origin: 'http://localhost:5173', // Replace this with your frontend URL
     credentials: true,
 }));
 
-app.use(cors({
-    origin: '*', // Allow all origins
-    credentials: true,
-}));
 
 app.use(morgan('tiny'));
 app.disable('x-powered-by'); // Removes all X-Powered-By headers.
