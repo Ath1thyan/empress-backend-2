@@ -14,19 +14,20 @@ const app = express();
 /** middlewares */
 app.use(express.json());
 
-app.use(cors({
-    origin: 'http://localhost:5173', // Correct frontend origin without the trailing slash
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-}));
+// app.use(cors({
+//     origin: 'http://localhost:5173', // Correct frontend origin without the trailing slash
+//     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+// }));
 
 app.use(morgan('tiny'));
 app.disable('x-powered-by'); // Removes all X-Powered-By headers.
 
 /** CORS Preflight */
-app.options('*', cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-}));
+// app.options('*', cors({
+//     origin: 'http://localhost:5173',
+//     credentials: true,
+// }));
+app.use(cors());
 
 const port = process.env.PORT || 8080;
 
