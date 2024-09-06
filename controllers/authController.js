@@ -297,10 +297,10 @@ export async function googlelogin(req, res) {
                 username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-8),
                 email: req.body.email,
                 password: hashedPassword,
-                salutation: req.body.salutation || 'Mr', // Provide a default salutation if not present
+                salutation: req.body.salutation || '',
                 firstName: req.body.name.split(" ")[0] || '',
                 lastName: req.body.name.split(" ")[1] || "",
-                mobile: req.body.mobile || '', // Optional mobile field, or provide a default
+                mobile: req.body.mobile || '',
                 googleId: req.body.id, // Ensure googleId is sent from client
             });
             

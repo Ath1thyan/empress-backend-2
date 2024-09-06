@@ -22,7 +22,7 @@ export const UserSchema = new mongoose.Schema({
     },
     salutation: {
         type: String,
-        enum: ['Mr', 'Ms', 'Dr', 'Prof', 'Mrs'],
+        enum: ['Mr', 'Ms', 'Dr', 'Prof', 'Mrs', ''],
         default: 'Mr'
     },
     firstName: {
