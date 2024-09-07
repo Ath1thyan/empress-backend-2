@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import otpGenerator from 'otp-generator';
 import { sendMail } from './mailer.js';
+import cloudinary from "../utils/cloudinary.js"
 
 /** Load environment variables */
 dotenv.config();
@@ -384,9 +385,9 @@ body: {
 */
 export async function updateUser(req, res) {
     try {
-        // const userId = req.query.id
-        const { userId } = req.user; // Extract the userId from the authenticated token
-        const updateFields = req.body;
+        // Extract the userId from the authenticated token
+        const { userId } = req.user;
+        const updateFields = { ...req.body };
 
         // Validate if userId exists
         if (!userId) {
@@ -397,11 +398,19 @@ export async function updateUser(req, res) {
         }
 
         // Ensure at least one field to update is provided
-        if (!Object.keys(updateFields).length) {
+        if (!Object.keys(updateFields).length && !req.file) {
             return res.status(400).send({
                 success: false,
                 message: 'No fields provided for update',
             });
+        }
+
+        // Handle profile picture upload if present
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: "profile_pictures",
+            });
+            updateFields.profile = result.secure_url; // Update the profile field with the Cloudinary URL
         }
 
         // Find and update the user by userId
@@ -452,6 +461,7 @@ export async function updateUser(req, res) {
         });
     }
 }
+
 
 
 /** GET: http://localhost:8080/api/test/auth/generateOTP */

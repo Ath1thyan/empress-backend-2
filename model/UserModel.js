@@ -54,7 +54,7 @@ export const UserSchema = new mongoose.Schema({
     },
     profile: {
         type: String,
-        default: ""
+        default: "https://avatar.iran.liara.run/public/boy"
     },
     isAdmin: {
         type: Boolean,

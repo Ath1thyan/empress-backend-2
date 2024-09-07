@@ -7,6 +7,8 @@ import { register, login, getUser, updateUser, generateOTP, verifyOTP, createRes
 import Auth, { localVariables } from '../middleware/auth.js';
 import { registerMail } from "../controllers/mailer.js";
 
+import upload from "../middleware/multer.js"
+
 
 /** POST Methods */
 router.route('/register').post(register);    // register
@@ -25,7 +27,8 @@ router.route('/verifyOTP').get(verifyOTP);   // verify generated OTP
 router.route('/createResetSession').get(createResetSession);  // reset all the variables
 
 /** PUT Methods */
-router.route('/updateuser').put(Auth, updateUser);  // update the user profile
+router.route('/updateuser').put(Auth, upload.single('profile'), updateUser);
+  // update the user profile
 router.route('/resetPassword').put(verifyUser, resetPassword);   // reset password
 
 /** DELETE Methods */
