@@ -36,10 +36,10 @@ export const UserSchema = new mongoose.Schema({
         maxlength: 50
     },
     mobile: {
-        type: Number,
+        type: String,
         required: false,
-        minlength: 6,
-        maxlength: 15,
+        minlength: 5,
+        maxlength: 20,
         sparse: true
     },
     address: {
@@ -56,10 +56,18 @@ export const UserSchema = new mongoose.Schema({
         type: String,
         default: "https://avatar.iran.liara.run/public/boy"
     },
+    isServiceProvider: {
+        type: Boolean,
+        default: false
+    },
     isAdmin: {
         type: Boolean,
         default: false
-    }
+    },
+    referral: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Referral',
+    },
 }, {
     timestamps: true,
     versionKey: false,
