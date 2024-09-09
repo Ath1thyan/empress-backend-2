@@ -229,6 +229,7 @@ export async function login(req, res) {
                 username: user.username,
                 email: user.email,
                 mobile: user.mobile,
+                profile: user.profile,
             },
         });
 
