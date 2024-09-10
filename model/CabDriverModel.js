@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 export const CabDriverSchema = mongoose.Schema({
+    driverId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     salutation: {
         type: String,
         enum: ['Mr', 'Ms', 'Dr', 'Prof', 'Mrs', ''],
@@ -45,6 +50,15 @@ export const CabDriverSchema = mongoose.Schema({
         type: String,
         default: "https://avatar.iran.liara.run/public/boy"
     },
+    drivingLicence: {
+        type: String,
+        required: true,
+    },
+    proofDocuments: [
+        {
+            type: String,
+        }
+    ],
     vehicle: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cab",

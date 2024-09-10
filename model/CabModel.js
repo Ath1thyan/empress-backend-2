@@ -45,6 +45,11 @@ export const CabSchema = mongoose.Schema({
             type: String,
         }
     ],
+    vehicleImages: [
+        {
+            type: String,
+        }
+    ],
     driver: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "CabDriver",
