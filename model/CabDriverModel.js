@@ -1,23 +1,6 @@
 import mongoose from "mongoose";
 
-export const UserSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: [true, "Username already exists"],
-    },
-    password: {
-        type: String,
-        required: true,
-        minlength: 8,
-        maxlength: 100
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: [true, "Email already registered"],
-        match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-    },
+export const CabDriverSchema = mongoose.Schema({
     salutation: {
         type: String,
         enum: ['Mr', 'Ms', 'Dr', 'Prof', 'Mrs', ''],
@@ -34,6 +17,12 @@ export const UserSchema = new mongoose.Schema({
         required: true,
         minlength: 1,
         maxlength: 50
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: [true, "Email already registered"],
+        match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     },
     mobile: {
         type: String,
@@ -56,25 +45,29 @@ export const UserSchema = new mongoose.Schema({
         type: String,
         default: "https://avatar.iran.liara.run/public/boy"
     },
-    isServiceProvider: {
-        type: Boolean,
-        default: false
+    vehicle: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cab",
+        required: true
     },
-    isLimosAdmin: {
-        type: Boolean,
-        default: false
+    dutyStatus: {
+        type: String,
+        enum: ['Available', 'On Duty', 'Off Duty'],
+        default: 'Available',
     },
-    isRepairAdmin: {
-        type: Boolean,
-        default: false
+    dutyTimings: {
+        type: Array,
+        required: true,
     },
-    isHospitalityAdmin: {
-        type: Boolean,
-        default: false
-    }
+    ratings: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "CabRating",
+        }
+    ]
 }, {
     timestamps: true,
     versionKey: false,
 });
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model("CabDriver", CabDriverSchema);
