@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 export const CabDriverSchema = mongoose.Schema({
     driverId: {
         type: String,
-        required: true,
         unique: true,
     },
     salutation: {
@@ -29,6 +28,10 @@ export const CabDriverSchema = mongoose.Schema({
         unique: [true, "Email already registered"],
         match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     },
+    password: {
+        type: String,
+        required: true,
+    },
     mobile: {
         type: String,
         required: false,
@@ -52,7 +55,6 @@ export const CabDriverSchema = mongoose.Schema({
     },
     drivingLicence: {
         type: String,
-        required: true,
     },
     proofDocuments: [
         {
@@ -60,8 +62,7 @@ export const CabDriverSchema = mongoose.Schema({
         }
     ],
     vehicle: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Cab",
+        type: String,
         required: true
     },
     dutyStatus: {

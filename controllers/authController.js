@@ -676,7 +676,8 @@ export async function logout(req, res) {
 
 
 // delete the user
-/** DELETE: http://localhost:8080/api/test/auth/deleteUser */export async function deleteUser(req, res) {
+/** DELETE: http://localhost:8080/api/test/auth/deleteUser */
+export async function deleteUser(req, res) {
     try {
         const { userId } = req.user; // Extract userId from the authenticated token
 

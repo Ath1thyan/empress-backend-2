@@ -3,33 +3,26 @@ import mongoose from "mongoose";
 export const CabSchema = mongoose.Schema({
     make: {
         type: String,
-        required: true,
     },
     model: {
         type: String,
-        required: true,
     },
     year: {
         type: Number,
-        required: true
     },
     color: {
         type: String,
-        required: true,
     },
     licensePlate: {
         type: String,
-        required: true,
         unique: true,
     },
     fuelType: {
         type: String,
-        required: true,
         enum: ['Gasoline', 'Diesel', 'Electric', 'Hybrid', 'Other'],
     },
     seatingCapacity: {
         type: Number,
-        required: true,
         min: 1
     },
     isWheelchairAccessible: {
@@ -53,7 +46,6 @@ export const CabSchema = mongoose.Schema({
     driver: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "CabDriver",
-        required: true,
     },
     tripStatus: {
         type: String,
