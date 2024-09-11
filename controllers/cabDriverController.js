@@ -69,7 +69,6 @@ export const getMyCabInfo = async (req, res) => {
     }
 
     let driverId = req.driverId;  // Assume driverId is extracted from the token in middleware
-    console.log('Driver ID from getMyCabInfo: ', driverId);
 
     try {
         // Find driver ID from the driver objectID
@@ -78,10 +77,8 @@ export const getMyCabInfo = async (req, res) => {
             return res.status(404).json({ success: false, message: "Driver not found" });
         }
         driverId = driver.driverId
-        console.log('Driver ID from getMyCabInfo: ', driverId);
         // Find the cab linked to the driver's `driverId` (not ObjectId)
         const cab = await Cab.findOne({ driver: driverId });
-        console.log(cab);
         
         if (!cab) {
             return res.status(404).json({ success: false, message: "Cab not found for this driver" });
@@ -109,7 +106,7 @@ export const updateCabTripStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: "Driver not found" });
         }
         driverId = driver.driverId
-        
+
         const cab = await Cab.findOneAndUpdate({ driver: driverId }, { tripStatus }, { new: true });
         if (!cab) {
             return res.status(404).json({ success: false, message: "Cab not found for this driver" });
