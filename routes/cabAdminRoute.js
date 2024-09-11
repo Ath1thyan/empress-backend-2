@@ -13,7 +13,7 @@ import {
     deleteCab,
     deleteCabDriver,
     blockUser
-} from '../controllers/adminController.js';
+} from '../controllers/cabAdminController.js';
 
 const router = express.Router();
 

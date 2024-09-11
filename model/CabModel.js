@@ -44,8 +44,7 @@ export const CabSchema = mongoose.Schema({
         }
     ],
     driver: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "CabDriver",
+        type: String
     },
     tripStatus: {
         type: String,

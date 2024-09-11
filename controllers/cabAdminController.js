@@ -4,6 +4,11 @@ import User from "../model/UserModel.js";
 import bcrypt from "bcryptjs";
 import { sendMail } from "./mailer.js";
 
+// Helper function to sanitize input (convert to lowercase and remove whitespace)
+const sanitizeInput = (value) => {
+    return value.toLowerCase().replace(/\s+/g, '');
+};
+
 // Get all users
 export const getAllUsers = async (req, res) => {
     try {
@@ -76,6 +81,10 @@ export const getCabById = async (req, res) => {
 // Add a new cab
 export const addCab = async (req, res) => {
     try {
+        // Sanitize license plate and driver fields
+        req.body.licensePlate = sanitizeInput(req.body.licensePlate);
+        req.body.driver = sanitizeInput(req.body.driver);
+
         const newCab = new Cab(req.body);
         await newCab.save();
         return res.status(201).json({ success: true, message: "Cab added successfully", cab: newCab });
@@ -89,6 +98,10 @@ export const addCab = async (req, res) => {
 export const addCabDriver = async (req, res) => {
     try {
         const { firstName, lastName, email, vehicle } = req.body;
+
+        // Sanitize driverId and vehicle
+        req.body.driverId = sanitizeInput(req.body.driverId);
+        req.body.vehicle = sanitizeInput(vehicle);
 
         // Generate random password
         const generatedPassword = Math.random().toString(36).slice(-8);
@@ -118,6 +131,13 @@ export const addCabDriver = async (req, res) => {
 // Edit cab info
 export const editCabInfo = async (req, res) => {
     try {
+        if (req.body.licensePlate) {
+            req.body.licensePlate = sanitizeInput(req.body.licensePlate);
+        }
+        if (req.body.driver) {
+            req.body.driver = sanitizeInput(req.body.driver);
+        }
+
         const updatedCab = await Cab.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedCab) return res.status(404).json({ success: false, message: "Cab not found" });
         return res.status(200).json({ success: true, message: "Cab info updated", cab: updatedCab });
@@ -130,6 +150,13 @@ export const editCabInfo = async (req, res) => {
 // Edit cab driver info
 export const editCabDriverInfo = async (req, res) => {
     try {
+        if (req.body.driverId) {
+            req.body.driverId = sanitizeInput(req.body.driverId);
+        }
+        if (req.body.vehicle) {
+            req.body.vehicle = sanitizeInput(req.body.vehicle);
+        }
+        
         const updatedDriver = await CabDriver.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedDriver) return res.status(404).json({ success: false, message: "Driver not found" });
         return res.status(200).json({ success: true, message: "Driver info updated", driver: updatedDriver });

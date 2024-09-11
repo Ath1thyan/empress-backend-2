@@ -141,7 +141,7 @@ export async function register(req, res) {
             salutation: salutation || "",
             firstName,
             lastName,
-            profile: profile || "",
+            profile: profile,
         });
 
         // Save the user to the database
