@@ -205,3 +205,45 @@ export const blockUser = async (req, res) => {
         return res.status(500).json({ success: false, message: "Failed to block user", error });
     }
 };
+
+// Unblock user
+export const unblockUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+        
+        user.isBlocked = false;
+        await user.save();
+
+        return res.status(200).json({ success: true, message: "User unblocked" });
+    } catch (error) {
+        console.error("Error unblocking user:", error);
+        return res.status(500).json({ success: false, message: "Failed to unblock user", error });
+    }
+};
+
+// List all bookings
+export const getAllBookings = async (req, res) => {
+};
+
+// Get booking by ID
+export const getBookingById = async (req, res) => {
+};
+
+// Get all reviews
+export const getAllReviews = async (req, res) => {
+};
+
+// Get review by ID
+export const getReviewById = async (req, res) => {
+};
+
+// Get all payment details
+export const getAllPaymentDetails = async (req, res) => {
+};
+
+// Get payment detail by ID
+export const getPaymentDetailById = async (req, res) => {
+};
+
+// 
