@@ -44,10 +44,16 @@ export const getMyCabBookingById = async (req, res) => {
 
 // Book a cab
 export const bookCab = async (req, res) => {
+    console.log(req.user);
+
+    if (!req.user || !req.user.userId) {
+        return res.status(400).json({ success: false, message: 'User is not authenticated' });
+    }
+    
     try {
         const booking = new CabBooking({
             ...req.body,
-            customer: req.user._id,
+            customer: req.user.userId,
         });
 
         await booking.save();
@@ -56,6 +62,7 @@ export const bookCab = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
 
 // Cancel a cab booking
 export const cancelCabBooking = async (req, res) => {

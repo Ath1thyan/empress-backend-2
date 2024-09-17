@@ -7,7 +7,7 @@ dotenv.config();
 export default function CabDriverAuth(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
-        console.log('Auth header: ', authHeader)
+        // console.log('Auth header: ', authHeader)
 
         // Check if the authorization header is present
         if (!authHeader) {
@@ -18,7 +18,7 @@ export default function CabDriverAuth(req, res, next) {
         }
 
         const token = authHeader.split(' ')[1];
-        console.log('Token: ', token)
+        // console.log('Token: ', token)
 
         // Check if the token is present
         if (!token) {
@@ -33,7 +33,7 @@ export default function CabDriverAuth(req, res, next) {
 
         // Attach decoded user information to the request
         req.driverId = decoded.driverId;
-        console.log('driverId: ', decoded.driverId)
+        // console.log('driverId: ', decoded.driverId)
         next();
     } catch (error) {
         console.error('Error in token verification:', error);

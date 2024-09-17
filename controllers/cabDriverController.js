@@ -1,5 +1,6 @@
 import Cab from "../model/CabModel.js";
 import CabDriver from "../model/CabDriverModel.js";
+import CabBooking from "../model/CabBookingModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
@@ -79,7 +80,7 @@ export const getMyCabInfo = async (req, res) => {
         driverId = driver.driverId
         // Find the cab linked to the driver's `driverId` (not ObjectId)
         const cab = await Cab.findOne({ driver: driverId });
-        
+
         if (!cab) {
             return res.status(404).json({ success: false, message: "Cab not found for this driver" });
         }
@@ -92,32 +93,34 @@ export const getMyCabInfo = async (req, res) => {
 };
 
 
+
 /**
  * Update cab trip status (e.g., 'Available', 'On Trip', 'Booking Received', etc.)
  */
 export const updateCabTripStatus = async (req, res) => {
     const { tripStatus } = req.body;
-    let driverId = req.driverId;  // Assume driverId is extracted from the token in middleware
+    const driverId = req.driverId;  // Assume driverId is extracted from the token in middleware
 
     try {
-        // Find driver ID from the driver objectID
+        // Check if the driver exists
         const driver = await CabDriver.findById(driverId);
         if (!driver) {
             return res.status(404).json({ success: false, message: "Driver not found" });
         }
-        driverId = driver.driverId
 
-        const cab = await Cab.findOneAndUpdate({ driver: driverId }, { tripStatus }, { new: true });
+        // Update the cab's trip status associated with the driver
+        const cab = await Cab.findOneAndUpdate({ driver: driver._id }, { tripStatus }, { new: true });
         if (!cab) {
             return res.status(404).json({ success: false, message: "Cab not found for this driver" });
         }
 
-        return res.status(200).json({ success: true, message: "Trip status updated", cab });
+        return res.status(200).json({ success: true, message: "Trip status updated successfully", cab });
     } catch (error) {
         console.error("Error updating trip status:", error);
         return res.status(500).json({ success: false, message: "Failed to update trip status", error });
     }
 };
+
 
 /**
  * Update driver duty status (e.g., 'Available', 'On Duty', 'Off Duty')
@@ -136,5 +139,127 @@ export const updateDriverDutyStatus = async (req, res) => {
     } catch (error) {
         console.error("Error updating duty status:", error);
         return res.status(500).json({ success: false, message: "Failed to update duty status", error });
+    }
+};
+
+
+
+/**
+ * Get previous bookings for the logged-in driver
+ */
+export const getPreviousBookings = async (req, res) => {
+    const driverId = req.driverId;
+
+    try {
+        const previousBookings = await CabBooking.find({ driver: driverId, bookingStatus: 'Completed' })
+            .populate('customer', 'firstName lastName email')
+            .populate('vehicle', 'make model licensePlate')
+            .sort({ pickupDate: -1 });
+
+        return res.status(200).json({ success: true, bookings: previousBookings });
+    } catch (error) {
+        console.error("Error fetching previous bookings:", error);
+        return res.status(500).json({ success: false, message: "Failed to retrieve previous bookings", error });
+    }
+};
+
+/**
+ * Get new bookings (pending or confirmed) for the logged-in driver
+ */
+export const getNewBookings = async (req, res) => {
+    const driverId = req.driverId; // Extracted from token in middleware
+
+    try {
+        const newBookings = await CabBooking.find({ driver: driverId, bookingStatus: { $in: ['Pending', 'Confirmed'] } })
+            .populate('customer', 'firstName lastName email') // Populate customer info
+            .populate('vehicle', 'make model licensePlate') // Populate vehicle info
+            .sort({ pickupDate: 1 }); // Sort by pickupDate in ascending order (upcoming first)
+
+        return res.status(200).json({ success: true, bookings: newBookings });
+    } catch (error) {
+        console.error("Error fetching new bookings:", error);
+        return res.status(500).json({ success: false, message: "Failed to retrieve new bookings", error });
+    }
+};
+
+/**
+ * Get booking by Id
+ */
+export const getBookingById = async (req, res) => {
+    const { bookingId } = req.params;
+
+    try {
+        const booking = await CabBooking.findById(bookingId)
+            .populate('customer', 'firstName lastName email')
+            .populate('vehicle', 'make model licensePlate');
+
+        if (!booking) {
+            return res.status(404).json({ success: false, message: "Booking not found" });
+        }
+
+        return res.status(200).json({ success: true, booking });
+    } catch (error) {
+        console.error("Error fetching booking:", error);
+        return res.status(500).json({ success: false, message: "Failed to retrieve booking", error });
+    }
+};
+
+
+// update booking status
+export const updateBookingStatus = async (req, res) => {
+    const { bookingId } = req.params; // Get bookingId from URL parameters
+    const { bookingStatus } = req.body; // Get bookingStatus from request body
+    const driverId = sanitizeInput(req.driverId); // Sanitize driverId
+
+    try {
+        // Verify that the driver is allowed to update this booking (optional, add logic if needed)
+
+        // Find and update the booking status
+        const booking = await CabBooking.findByIdAndUpdate(
+            bookingId,
+            { bookingStatus },
+            { new: true }
+        );
+
+        if (!booking) {
+            return res.status(404).json({ success: false, message: "Booking not found" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Booking status updated successfully",
+            booking
+        });
+    } catch (error) {
+        console.error("Error updating booking status:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update booking status",
+            error
+        });
+    }
+};
+
+
+/**
+ * Get upcoming booking for the logged-in driver
+ */
+export const getUpcomingBooking = async (req, res) => {
+    const driverId = req.driverId;
+
+    try {
+        const booking = await CabBooking.findOne({ driver: driverId, bookingStatus: 'Confirmed' })
+            .populate('customer', 'firstName lastName email')
+            .populate('vehicle', 'make model licensePlate')
+            .sort({ pickupDate: 1 });
+
+        if (!booking) {
+            return res.status(404).json({ success: false, message: "No upcoming booking found" });
+        }
+
+        return res.status(200).json({ success: true, booking });
+    } catch (error) {
+        console.error("Error fetching upcoming booking:", error);
+        return res.status(500).json({ success: false, message: "Failed to retrieve upcoming booking", error });
     }
 };

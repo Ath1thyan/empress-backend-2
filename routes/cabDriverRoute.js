@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 // Import controllers
-import { login, getProfileInfo, getMyCabInfo, updateCabTripStatus, updateDriverDutyStatus } from "../controllers/cabDriverController.js";
+import { login, getProfileInfo, getMyCabInfo, updateCabTripStatus, updateDriverDutyStatus, getPreviousBookings, getNewBookings, updateBookingStatus, getUpcomingBooking, getBookingById } from "../controllers/cabDriverController.js";
 import CabDriverAuth from "../middleware/cabDriver.js";
 
 // Login route (no authentication needed)
@@ -19,5 +19,20 @@ router.patch("/cab/trip-status", CabDriverAuth, updateCabTripStatus);
 
 // Update driver duty status (protected route, requires authentication)
 router.patch("/duty-status", CabDriverAuth, updateDriverDutyStatus);
+
+// Get previous bookings (protected route, requires authentication)
+router.get("/previous-bookings", CabDriverAuth, getPreviousBookings);
+
+// Get new bookings (protected route, requires authentication)
+router.get("/new-bookings", CabDriverAuth, getNewBookings);
+
+// Update booking status (protected route, requires authentication)
+router.patch("/booking-status/:bookingId", CabDriverAuth, updateBookingStatus);
+
+// Get upcoming booking (protected route, requires authentication)
+router.get("/upcoming-booking", CabDriverAuth, getUpcomingBooking);
+
+// Get booking by ID (protected route, requires authentication)
+router.get("/booking/:bookingId", CabDriverAuth, getBookingById);
 
 export default router;
