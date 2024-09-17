@@ -1,6 +1,9 @@
 import Cab from "../model/CabModel.js";
 import CabDriver from "../model/CabDriverModel.js";
 import User from "../model/UserModel.js";
+import CabBooking from "../model/CabBookingModel.js";
+import CabRating from "../model/CabRatingModel.js";
+import CabPayment from "../model/CabPaymentModel.js";
 import bcrypt from "bcryptjs";
 import { sendMail } from "./mailer.js";
 
@@ -224,26 +227,69 @@ export const unblockUser = async (req, res) => {
 
 // List all bookings
 export const getAllBookings = async (req, res) => {
+    try {
+        const bookings = await CabBooking.find();
+        return res.status(200).json({ success: true, bookings });
+    } catch (error) {
+        console.error("Error fetching bookings:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch bookings", error });
+    }
 };
 
 // Get booking by ID
 export const getBookingById = async (req, res) => {
+    try {
+        const booking = await CabBooking.findById(req.params.id);
+        if (!booking) return res.status(404).json({ success: false, message: "Booking not found" });
+        return res.status(200).json({ success: true, booking });
+    } catch (error) {
+        console.error("Error fetching booking:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch booking", error });
+    }
 };
 
 // Get all reviews
 export const getAllReviews = async (req, res) => {
+    try {
+        const reviews = await CabRating.find();
+        return res.status(200).json({ success: true, reviews });
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch reviews", error });
+    }
 };
 
 // Get review by ID
 export const getReviewById = async (req, res) => {
+    try {
+        const review = await CabRating.findById(req.params.id);
+        if (!review) return res.status(404).json({ success: false, message: "Review not found" });
+        return res.status(200).json({ success: true, review });
+    } catch (error) {
+        console.error("Error fetching review:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch review", error });
+    }
 };
 
 // Get all payment details
 export const getAllPaymentDetails = async (req, res) => {
+    try {
+        const payments = await CabPayment.find();
+        return res.status(200).json({ success: true, payments });
+    } catch (error) {
+        console.error("Error fetching payments:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch payments", error });
+    }
 };
 
 // Get payment detail by ID
 export const getPaymentDetailById = async (req, res) => {
+    try {
+        const payment = await CabPayment.findById(req.params.id);
+        if (!payment) return res.status(404).json({ success: false, message: "Payment detail not found" });
+        return res.status(200).json({ success: true, payment });
+    } catch (error) {
+        console.error("Error fetching payment detail:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch payment detail", error });
+    }
 };
-
-// 
