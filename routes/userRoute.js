@@ -21,7 +21,7 @@ import Auth from '../middleware/auth.js';
 /** GET Methods */
 router.route('/cabs/mycabbookings').get(Auth, getMyCabBookings);
 router.route('/cabs/mycabbooking/:id').get(Auth, getMyCabBookingById);
-router.route('/cabs/mycabs').get(Auth, getMyCabPayments);
+router.route('/cabs/mycabpayments').get(Auth, getMyCabPayments);
 router.route('/cabs/mycabpayment/:id').get(Auth, getMyCabPaymentById);
 router.route('/cabs/myratings').get(Auth, getMyCabRatings);
 router.route('/cabs/myrating/:id').get(Auth, getMyCabRatingById);

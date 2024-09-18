@@ -1,6 +1,7 @@
 import Cab from "../model/CabModel.js";
 import CabDriver from "../model/CabDriverModel.js";
 import CabBooking from "../model/CabBookingModel.js";
+import CabRating from "../model/CabRatingModel.js"
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
@@ -143,7 +144,6 @@ export const updateDriverDutyStatus = async (req, res) => {
 };
 
 
-
 /**
  * Get previous bookings for the logged-in driver
  */
@@ -261,5 +261,38 @@ export const getUpcomingBooking = async (req, res) => {
     } catch (error) {
         console.error("Error fetching upcoming booking:", error);
         return res.status(500).json({ success: false, message: "Failed to retrieve upcoming booking", error });
+    }
+};
+
+
+// get my ratings
+export const getMyRatings = async (req, res) => {
+    const driverId = req.driverId;
+
+    try {
+        const ratings = await CabRating.find({ driver: driverId }).sort({ createdAt: -1 });
+
+        return res.status(200).json({ success: true, ratings });
+    } catch (error) {
+        console.error("Error fetching ratings:", error);
+        return res.status(500).json({ success: false, message: "Failed to retrieve ratings", error });
+    }
+};
+
+// get my rating by ID
+export const getRatingById = async (req, res) => {
+    const { ratingId } = req.params;
+
+    try {
+        const rating = await CabRating.findById(ratingId);
+
+        if (!rating) {
+            return res.status(404).json({ success: false, message: "Rating not found" });
+        }
+
+        return res.status(200).json({ success: true, rating });
+    } catch (error) {
+        console.error("Error fetching rating:", error);
+        return res.status(500).json({ success: false, message: "Failed to retrieve rating", error });
     }
 };

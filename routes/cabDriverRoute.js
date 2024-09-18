@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 // Import controllers
-import { login, getProfileInfo, getMyCabInfo, updateCabTripStatus, updateDriverDutyStatus, getPreviousBookings, getNewBookings, updateBookingStatus, getUpcomingBooking, getBookingById } from "../controllers/cabDriverController.js";
+import { login, getProfileInfo, getMyCabInfo, updateCabTripStatus, updateDriverDutyStatus, getPreviousBookings, getNewBookings, updateBookingStatus, getUpcomingBooking, getBookingById, getMyRatings, getRatingById } from "../controllers/cabDriverController.js";
 import CabDriverAuth from "../middleware/cabDriver.js";
 
 // Login route (no authentication needed)
@@ -34,5 +34,11 @@ router.get("/upcoming-booking", CabDriverAuth, getUpcomingBooking);
 
 // Get booking by ID (protected route, requires authentication)
 router.get("/booking/:bookingId", CabDriverAuth, getBookingById);
+
+// Get my ratings (protected route, requires authentication)
+router.get("/ratings", CabDriverAuth, getMyRatings);
+
+// Get rating by ID (protected route, requires authentication)
+router.get("/rating/:ratingId", CabDriverAuth, getRatingById);
 
 export default router;

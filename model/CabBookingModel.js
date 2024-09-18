@@ -49,7 +49,7 @@ export const CabBookingSchema = mongoose.Schema({
     },
     bookingStatus: {
         type: String,
-        enum: ['Pending', 'Confirmed', 'Canceled', 'Completed'],
+        enum: ['Pending', 'Confirmed', 'Canceled', 'Canceled by customer', 'Completed'],
         default: 'Pending',
     },
     totalAmount: {
