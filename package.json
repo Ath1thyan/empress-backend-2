@@ -15,8 +15,10 @@
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.4.0",
     "cors": "^2.8.5",
+    "device-detector-js": "^3.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "geoip-lite": "^1.4.10",
     "jsonwebtoken": "^9.0.2",
     "mailgen": "^2.0.28",
     "mongodb": "^6.8.0",
@@ -30,6 +32,9 @@
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth2": "^0.2.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "user-agent": "^1.0.4",
+    "user-agents": "^1.1.325",
+    "useragent": "^2.3.0"
   }
 }

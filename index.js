@@ -6,7 +6,7 @@ import dbConnection from './database/dbConnection.js';
 
 /** Import routes */
 import authRoute from './routes/authRoute.js';
-import adminRoute from './routes/cabAdminRoute.js';
+import cabAdminRoute from './routes/cabAdminRoute.js';
 import cabDriverRoute from './routes/cabDriverRoute.js';
 import userRoute from './routes/userRoute.js';
 import superAdminRoute from './routes/adminRoute.js'
@@ -42,7 +42,7 @@ app.get('/api', (req, res) => {
 
 /** API Routes */
 app.use('/api/test/auth', authRoute);
-app.use('/api/test/admin', adminRoute);
+app.use('/api/test/cabadmin', cabAdminRoute);
 app.use('/api/test/cab-driver', cabDriverRoute);
 app.use('/api/test/user', userRoute);
 app.use('/api/test/superadmin', superAdminRoute);

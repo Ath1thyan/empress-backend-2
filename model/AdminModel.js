@@ -24,7 +24,30 @@ export const AdminSchema = new mongoose.Schema({
         createdAt: {
             type: Date,
             default: Date.now,
-        }
+        },
+        lastUsedAt: {
+            type: Date,
+            default: Date.now,
+        },
+        ipAddress: String,
+        userAgent: String,
+        browser: String,
+        os: String,
+        device: String,
+        location: {
+            type: Object,
+            coordinates: [Number],
+            city: String,
+            region: String,
+            country: String,
+            zipcode: String,
+            timezone: String,
+        },
+        deviceType: String,
+        deviceBrand: String,
+        deviceModel: String,
+        deviceScreenSize: String,
+        deviceOperatingSystem: String,
     }]
 }, {
     timestamps: true,

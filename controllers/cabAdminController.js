@@ -18,37 +18,35 @@ export const loginAdmin = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Find admin by username
+        // Check if username and password are provided
+        if (!username ||!password) {
+            return res.status(400).json({ success: false, message: "Username and password are required" });
+        }
+
+        // Find the admin in the database
         const admin = await Admin.findOne({ username });
 
-        if (!admin) {
-            return res.status(404).json({ success: false, message: 'Admin not found.' });
-        }
+        // Check if the admin exists
+        if (!admin) return res.status(404).json({ success: false, message: "Admin not found" });
 
-        // Compare the provided password with the stored hashed password
+        // Check if the password matches
         const isMatch = await bcrypt.compare(password, admin.password);
 
-        if (!isMatch) {
-            return res.status(400).json({ success: false, message: 'Incorrect password.' });
-        }
-
-        // Prevent another super admin from accessing this account
-        if (admin.isSuperAdmin && req.admin?.isSuperAdmin) {
-            return res.status(403).json({ success: false, message: 'Access denied. Cannot login to another Super Admin account.' });
-        }
+        if (!isMatch) return res.status(401).json({ success: false, message: "Incorrect password" });
 
         // Generate JWT token
-        const token = jwt.sign({ _id: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-        // Add token to sessions array in the admin document
+        const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET, {
+            expiresIn: "24h",
+        }
+        );
         admin.sessions.push({ token });
         await admin.save();
-
-        res.status(200).json({ success: true, token, role: admin.role, message: 'Login successful.' });
+        return res.status(200).json({ success: true, token });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("Error logging in admin:", error);
+        return res.status(500).json({ success: false, message: "Failed to login admin", error });
     }
-};
+    };
 
 // Get all users
 export const getAllUsers = async (req, res) => {
