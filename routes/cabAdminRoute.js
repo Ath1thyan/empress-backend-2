@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+    loginAdmin,
     getAllUsers,
     getUserById,
     getAllCabDrivers,
@@ -19,13 +20,17 @@ import {
     getAllPaymentDetails,
     getBookingById,
     getReviewById,
-    getPaymentDetailById,
+    getPaymentDetailById
 } from '../controllers/cabAdminController.js';
+import { adminAuthMiddleware, limosAdminMiddleware } from '../middleware/admin.js';
 
 const router = express.Router();
 
+// Admin Routes
+router.post('/login', loginAdmin);  // Login admin
+
 // Users Routes
-router.get('/users', getAllUsers);  // Get all users
+router.get('/users', adminAuthMiddleware, limosAdminMiddleware, getAllUsers);  // Get all users
 router.get('/users/:id', getUserById);  // Get user by ID
 router.patch('/users/block/:id', blockUser);  // Block a user
 router.patch('/users/unblock/:id', unblockUser);  // Unblock a user
@@ -46,7 +51,7 @@ router.delete('/cabs/delete-cab/:id', deleteCab);  // Delete a cab
 
 // Bookings Routes
 router.get('/bookings', getAllBookings);  // Get all bookings
-router.get('/bookings/:id', getBookingById);  // Get booking by ID
+router.get('/booking/:id', getBookingById);  // Get booking by ID
 
 // Reviews Routes
 router.get('/reviews', getAllReviews);  // Get all reviews

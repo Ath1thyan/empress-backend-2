@@ -4,12 +4,50 @@ import User from "../model/UserModel.js";
 import CabBooking from "../model/CabBookingModel.js";
 import CabRating from "../model/CabRatingModel.js";
 import CabPayment from "../model/CabPaymentModel.js";
+import Admin from "../model/AdminModel.js";
 import bcrypt from "bcryptjs";
 import { sendMail } from "./mailer.js";
 
 // Helper function to sanitize input (convert to lowercase and remove whitespace)
 const sanitizeInput = (value) => {
     return value.toLowerCase().replace(/\s+/g, '');
+};
+
+// Login Limos Admin
+export const loginAdmin = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Find admin by username
+        const admin = await Admin.findOne({ username });
+
+        if (!admin) {
+            return res.status(404).json({ success: false, message: 'Admin not found.' });
+        }
+
+        // Compare the provided password with the stored hashed password
+        const isMatch = await bcrypt.compare(password, admin.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: 'Incorrect password.' });
+        }
+
+        // Prevent another super admin from accessing this account
+        if (admin.isSuperAdmin && req.admin?.isSuperAdmin) {
+            return res.status(403).json({ success: false, message: 'Access denied. Cannot login to another Super Admin account.' });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ _id: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+        // Add token to sessions array in the admin document
+        admin.sessions.push({ token });
+        await admin.save();
+
+        res.status(200).json({ success: true, token, role: admin.role, message: 'Login successful.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 };
 
 // Get all users
@@ -268,6 +306,18 @@ export const getReviewById = async (req, res) => {
     } catch (error) {
         console.error("Error fetching review:", error);
         return res.status(500).json({ success: false, message: "Failed to fetch review", error });
+    }
+};
+
+// Remove a rating
+export const removeRating = async (req, res) => {
+    try {
+        const deletedReview = await CabRating.findByIdAndDelete(req.params.id);
+        if (!deletedReview) return res.status(404).json({ success: false, message: "Review not found" });
+        return res.status(200).json({ success: true, message: "Review deleted" });
+    } catch (error) {
+        console.error("Error deleting review:", error);
+        return res.status(500).json({ success: false, message: "Failed to delete review", error });
     }
 };
 
