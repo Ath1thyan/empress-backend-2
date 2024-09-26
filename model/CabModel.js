@@ -21,6 +21,14 @@ export const CabSchema = mongoose.Schema({
         type: String,
         enum: ['Gasoline', 'Diesel', 'Electric', 'Hybrid', 'Other'],
     },
+    cabCategory: {
+        type: String,
+        enum: ['Sedan', 'Micro', 'Compact', 'Large', 'Hatchback', 'SUV', 'Truck', 'Minivan', 'VAN', 'Other']
+    },
+    cabType: {
+        type: String,
+        enum: ['Luxury', 'Standard']
+    },
     seatingCapacity: {
         type: Number,
         min: 1
@@ -32,6 +40,10 @@ export const CabSchema = mongoose.Schema({
     isPetsAllowed: {
         type: Boolean,
         default: false,
+    },
+    rentPerKm: {
+        type: Number,
+        required: true,
     },
     vehicleDocuments: [
         {
