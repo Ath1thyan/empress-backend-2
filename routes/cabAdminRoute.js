@@ -57,4 +57,6 @@ router.get('/reviews/:id', adminAuthMiddleware, limosAdminMiddleware, getReviewB
 router.get('/payment-details', adminAuthMiddleware, limosAdminMiddleware, getAllPaymentDetails);  // Get all payment details
 router.get('/payment-details/:id', adminAuthMiddleware, limosAdminMiddleware, getPaymentDetailById);  // Get payment detail by ID
 
+
+// Export the router
 export default router;
