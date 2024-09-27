@@ -39,7 +39,7 @@ router.put('/drivers/update-driver/:id', adminAuthMiddleware, limosAdminMiddlewa
 router.delete('/drivers/delete-driver/:id', adminAuthMiddleware, limosAdminMiddleware, deleteCabDriver);  // Delete a cab driver
 
 // Cabs Routes - Only accessible by Limos Admin
-router.get('/cabs', adminAuthMiddleware, limosAdminMiddleware, getAllCabs);  // Get all cabs
+router.get('/cabs', getAllCabs);  // Get all cabs
 router.get('/cabs/:id', adminAuthMiddleware, limosAdminMiddleware, getCabById);  // Get cab by ID
 router.post('/cabs/add-cab', adminAuthMiddleware, limosAdminMiddleware, addCab);  // Add a new cab
 router.put('/cabs/update-cab/:id', adminAuthMiddleware, limosAdminMiddleware, editCabInfo);  // Edit a cab's information
