@@ -7,23 +7,32 @@ on:
   push:
     branches: [ "main" ]
 
-
 jobs:
   build:
-
     runs-on: self-hosted
+    timeout-minutes: 20  # Increase timeout
 
     strategy:
       matrix:
         node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: pm2 restart Backend
+
+    - name: Clean NPM Cache (Optional)
+      run: npm cache clean --force
+
+    - name: Install Dependencies
+      run: npm ci --verbose  # Verbose logging
+
+    - name: List PM2 Processes (Optional)
+      run: pm2 list  # Check if PM2 is running and managing processes correctly
+
+    - name: Restart Backend API
+      run: pm2 restart Backend
