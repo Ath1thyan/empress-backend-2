@@ -1,31 +1,56 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
+# This workflow will do a clean installation of node dependencies, cache/restore them,
+# build the source code, and run tests across different versions of node
+# For more information, see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
 name: Node.js CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]  # Trigger workflow on push to the main branch
 
 jobs:
   build:
-
-    runs-on: self-hosted
+    runs-on: self-hosted  # Specify to use self-hosted runner
 
     strategy:
       matrix:
-        node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [20.x, 22.x]  # Test with Node.js versions 20.x and 22.x
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: |
+        cache-dependency-path: '**/package-lock.json'  # Use package-lock.json for dependency caching
+
+    - name: Install Dependencies
+      run: npm ci --verbose  # Use `npm ci` for a clean install with detailed logging
+
+    - name: Verify PM2 Installation
+      run: pm2 --version  # Check if PM2 is installed correctly
+
+    - name: Create and Populate .env File
+      run: |
         touch .env
         echo "${{ secrets.PROD }}" > .env
-    - run: pm2 restart BackendAPI
+        cat .env  # Output .env content for debugging
+
+    - name: List Current PM2 Processes
+      run: pm2 list  # List running PM2 processes before starting/restarting
+
+    - name: Restart Backend API with PM2
+      run: |
+        pm2 start ecosystem.config.js --only BackendAPI || pm2 restart BackendAPI
+      env:  # Pass environment variables to ensure PM2 can access them
+        NODE_ENV: production
+        PATH: $PATH:$(npm bin)  # Ensure PM2 is in PATH
+
+    - name: Check Backend API Status
+      run: pm2 show BackendAPI  # Show the status of the restarted process
